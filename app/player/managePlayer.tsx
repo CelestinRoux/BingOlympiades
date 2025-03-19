@@ -5,9 +5,12 @@ import { db, collection, doc, addDoc, deleteDoc, updateDoc, getDocs } from "@/fi
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedText } from "@/components/ThemedText";
 import { Header } from "@/components/Header";
+import { useLocalSearchParams } from "expo-router";
 
 export default function ManagePlayer() {
     const [modalVisible, setModalVisible] = useState(false);
+    const { isUnlocked } = useLocalSearchParams();
+    const unlocked = isUnlocked === "true";
     const [showDatePicker, setShowDatePicker] = useState(false);
     const inputDateRef = useRef<TextInput>(null);
     const [nom, setNom] = useState("");
@@ -138,23 +141,27 @@ export default function ManagePlayer() {
                                 <ThemedText style={{flex: 1}} variant="subtitle2" color="grayDark">
                                     {player.nom} - {calculateAge(player.dateNaissance)} ans - {player.sexe}
                                 </ThemedText>
-                                <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-                                    <Switch
-                                        value={active[player.id] !== undefined ? active[player.id] : player.active}
-                                        onValueChange={() => handleSwitchChange(player.id)}
-                                    />
-                                    <TouchableOpacity 
-                                        onPress={() => delPlayer(player.id)} 
-                                        style={{ backgroundColor: 'transparent' }}
-                                    >
-                                        <Text style={{ fontSize: 20 }}>❌</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                {(unlocked && 
+                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+                                        <Switch
+                                            value={active[player.id] !== undefined ? active[player.id] : player.active}
+                                            onValueChange={() => handleSwitchChange(player.id)}
+                                        />
+                                        <TouchableOpacity 
+                                            onPress={() => delPlayer(player.id)} 
+                                            style={{ backgroundColor: 'transparent' }}
+                                        >
+                                            <Text style={{ fontSize: 20 }}>❌</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
                             </View>
                         )
                     })}
                 </ScrollView>
-                <Button title="Ajouter un joueur" onPress={() => setModalVisible(true)} />
+                {(unlocked && 
+                    <Button title="Ajouter un joueur" onPress={() => setModalVisible(true)} />
+                )}
 
                 <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={onClose}>
                     <Pressable style={styles.backdrop} onPress={onClose}  />

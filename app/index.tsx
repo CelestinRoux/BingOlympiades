@@ -8,7 +8,7 @@ import { fetchGames } from '@/hooks/useFetchGames';
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { fetchScores } from "@/hooks/useFetchScores";
-import { db, collection, doc, addDoc, deleteDoc, getDocs, setDoc } from "@/firebaseConfig";
+import { db, collection, doc, addDoc, deleteDoc, getDocs, setDoc } from "../firebaseConfig";
 import { Header } from "@/components/Header";
 import { TextInput } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
@@ -323,13 +323,12 @@ export default function Index() {
               </Modal>
             )}
         </View>
-        {isUnlocked && (
-          <View style={{gap: 10}}>
-            <ButtonLink path={"./player/managePlayer" as RelativePathString} text="Gestion des joueurs" />
-            <ButtonLink path={"./team/manageTeam" as RelativePathString} text="Gestion des équipes" />
-            <ButtonLink path={"./game/manageGame" as RelativePathString} text="Gestion des jeux" />
-          </View>
-        )}
+        
+        <View style={{gap: 10}}>
+          <ButtonLink path={"./player/managePlayer" as RelativePathString} isUnlocked={isUnlocked}  text={isUnlocked ? "Gestion des joueurs" : "Liste des joueurs" } />
+          <ButtonLink path={"./team/manageTeam" as RelativePathString} isUnlocked={isUnlocked}  text={isUnlocked ? "Gestion des équipes" : "Liste des équipes" }  />
+          <ButtonLink path={"./game/manageGame" as RelativePathString} isUnlocked={isUnlocked}  text={isUnlocked ? "Gestion des jeux" : "Liste des jeux" }  />
+        </View>
         
       </ScrollView>
     </View>

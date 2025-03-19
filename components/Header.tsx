@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from 'expo-router';
 import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword  } from "firebase/auth";
-import { app } from "@/firebaseConfig";
+import { app } from "../firebaseConfig";
 import Constants from 'expo-constants';
 
 type Props = ViewProps & {

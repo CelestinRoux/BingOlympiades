@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, TextInput, Modal, TouchableOpacity, Pressable, StyleSheet, ScrollView, Alert } from "react-native";
-import { db, collection, doc, addDoc, deleteDoc, getDocs } from "@/firebaseConfig";
+import { db, collection, doc, addDoc, deleteDoc } from "@/firebaseConfig";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { fetchGames } from "@/hooks/useFetchGames";
 import { Header } from "@/components/Header";
+import { useLocalSearchParams } from "expo-router";
 
 export default function ManageGame() {
     const colors = useThemeColors();
     const [modalVisible, setModalVisible] = useState(false);
+    const { isUnlocked } = useLocalSearchParams();
+    const unlocked = isUnlocked === "true";
     const [nom, setNom] = useState("");
     const [regles, setRegles] = useState("");
     const [games, setGames] = useState<Game[]>([]);
+    const [idGameRuleOpen, setIdGameRuleOpen] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     
     const addGame = async () => {
@@ -75,8 +79,11 @@ export default function ManageGame() {
         setModalVisible(false);
     }
 
-    const toggleText = () => {
-        setIsOpen(!isOpen);
+    const toggleText = (gameId: string) => {
+        if (gameId == idGameRuleOpen || idGameRuleOpen == "" || !isOpen) {
+            setIsOpen(!isOpen);
+        }
+        setIdGameRuleOpen(gameId);
     };
 
     return (
@@ -89,21 +96,23 @@ export default function ManageGame() {
                             <View key={index} style={[styles.gameContainer, {backgroundColor: colors.tint}]}>
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                     <ThemedText style={{paddingBottom: 10}} variant="subtitle1" color="grayDark">{game.nom}</ThemedText>
-                                    <TouchableOpacity 
-                                        onPress={() => delGame(game.id)} 
-                                        style={{ backgroundColor: 'transparent' }}
-                                    >
-                                        <Text style={{ fontSize: 20 }}>❌</Text>
-                                    </TouchableOpacity>
+                                    {(unlocked && 
+                                        <TouchableOpacity 
+                                            onPress={() => delGame(game.id)} 
+                                            style={{ backgroundColor: 'transparent' }}
+                                        >
+                                            <Text style={{ fontSize: 20 }}>❌</Text>
+                                        </TouchableOpacity>
+                                    )}
                                 </View>
                                 <View style={[styles.reglesContainer, { backgroundColor: 'rgba(255, 255, 255, 0.3)' }]}>
-                                <TouchableOpacity onPress={toggleText}>
+                                <TouchableOpacity onPress={() => toggleText(game.id)}>
                                     <ThemedText style={styles.toggleButton} variant="subtitle2">
-                                    {isOpen ? '⬆️' : 'Afficher les règles'}
+                                    {isOpen && game.id == idGameRuleOpen ? '⬆️' : 'Afficher les règles'}
                                     </ThemedText>
                                 </TouchableOpacity>
 
-                                {isOpen && (
+                                {isOpen && game.id == idGameRuleOpen && (
                                     <ThemedText variant="subtitle3" color="grayDark">
                                     {game.regles}
                                     </ThemedText>
@@ -113,7 +122,9 @@ export default function ManageGame() {
                         )
                     })}
                 </ScrollView>
-                <Button title="Ajouter un jeu" onPress={() => setModalVisible(true)} />
+                {(unlocked && 
+                    <Button title="Ajouter un jeu" onPress={() => setModalVisible(true)} />
+                )}
                     
                 {/* 🔹 Modal pour ajouter un jeu */}
                 <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={onClose}>

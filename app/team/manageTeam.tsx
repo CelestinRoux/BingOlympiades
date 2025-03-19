@@ -5,10 +5,13 @@ import { ThemedText } from "@/components/ThemedText";
 import { fetchTeams } from "@/hooks/useFetchTeams";
 import { Header } from "@/components/Header";
 import { useThemeColors } from "@/hooks/useThemeColors";
+import { useLocalSearchParams } from "expo-router";
 
 export default function ManageTeam() {
     const colors = useThemeColors();
     const [modalVisible, setModalVisible] = useState(false);
+    const { isUnlocked } = useLocalSearchParams();
+    const unlocked = isUnlocked === "true";
     const [nbEquipes, setNbEquipes] = useState(0);
     const [players, setPlayers] = useState<Player[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
@@ -213,7 +216,7 @@ export default function ManageTeam() {
                         return (
                             <View key={index} style={[styles.teamContainer, { backgroundColor: teamColor }]}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    {editingTeamId === team.id ? (
+                                    {editingTeamId === team.id && unlocked ? (
                                         <TextInput
                                             style={{ paddingBottom: 10, borderBottomWidth: 1, borderColor: colors.grayMedium }}
                                             value={customName}
@@ -252,7 +255,10 @@ export default function ManageTeam() {
                         );
                     })}
                 </ScrollView>
-                <Button title="Générer les équipes" onPress={() => setModalVisible(true)} />
+                {(unlocked && 
+                    <Button title="Générer les équipes" onPress={() => setModalVisible(true)} />
+                )}
+
                 <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={onClose}>
                     <Pressable style={styles.backdrop} onPress={onClose}  />
                     <View style={styles.popup}>

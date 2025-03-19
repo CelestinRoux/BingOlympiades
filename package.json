@@ -15,14 +15,14 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@expo/config-plugins": "^9.0.17",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-picker/picker": "2.9.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
-    "expo": "~52.0.37",
+    "expo": "^52.0.39",
     "expo-blur": "~14.0.3",
-    "expo-firebase-core": "^6.0.0",
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
     "expo-linear-gradient": "^14.0.2",
@@ -57,6 +57,13 @@
     "jest-expo": "~52.0.4",
     "react-test-renderer": "18.3.1",
     "typescript": "^5.3.3"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "listUnknownPackages": false
+      }
+    }
   },
   "private": true
 }
